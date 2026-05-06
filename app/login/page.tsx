@@ -1,9 +1,18 @@
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import { Suspense } from "react";
 import AuthForm from "@/components/AuthForm";
 
 export const metadata = { title: "Вход — AI Tools" };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (user) {
+    redirect("/dashboard");
+  }
+
   return (
     <main className="min-h-screen bg-zinc-950 flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-sm">
