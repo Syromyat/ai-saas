@@ -27,9 +27,8 @@ export async function POST(req: Request) {
       message.content
         .filter((b) => b.type === "text")
         .map((b) => (b as { type: "text"; text: string }).text)
-        .join("") || "Нет ответа";
+        .join("") || "Net otveta";
 
-    // Сохраняем в историю (не блокируем ответ)
     try {
       const supabase = await createClient();
       const { data: { user } } = await supabase.auth.getUser();
@@ -43,6 +42,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ result });
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ error: "Ошибка генерации. Попробуйте позже." }, { status: 500 });
+    return NextResponse.json({ error: "Oshibka generacii. Poprobujte pozzhe." }, { status: 500 });
   }
 }
