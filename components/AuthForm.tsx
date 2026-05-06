@@ -30,8 +30,8 @@ export default function AuthForm() {
       if (error) {
         setMessage({ type: "error", text: "Неверный email или пароль" });
       } else {
-        router.push(next);
-        router.refresh();
+router.push("/dashboard");
+router.refresh();
       }
     } else {
       const { data, error } = await supabase.auth.signUp({
