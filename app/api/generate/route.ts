@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const systemPrompt = prompts[tool] ?? prompts.resume;
 
     const message = await client.messages.create({
-      model: claude-opus-4-7,
+      model: model: "claude-opus-4-7",
       max_tokens: 1024,
       system: systemPrompt,
       messages: [{ role: "user", content: prompt }],
