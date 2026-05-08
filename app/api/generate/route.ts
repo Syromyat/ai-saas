@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       message.content
         .filter((b) => b.type === "text")
         .map((b) => (b as { type: "text"; text: string }).text)
-        .join("") || "Net otveta";
+        .join("") || "Нет ответа";
 
     try {
       const supabase = await createClient();
@@ -42,6 +42,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ result });
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ error: "Oshibka generacii. Poprobujte pozzhe." }, { status: 500 });
+    return NextResponse.json({ error: "Ошибка генерации. Попробуйте позже." }, { status: 500 });
   }
 }
