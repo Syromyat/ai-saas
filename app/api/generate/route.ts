@@ -57,18 +57,16 @@ export async function POST(req: Request) {
           items: [
             {
               description: `Подписка AI Tools - ${plan.name}`,
-              quantity: "1.00",
+              quantity: "1",
               amount: {
                 value: plan.price.toFixed(2),
                 currency: "RUB",
               },
-              vat_code: 1,
               payment_mode: "full_payment",
               payment_subject: "service",
             },
           ],
           internet: "true",
-          timezone: 2,
         },
       }),
     });
