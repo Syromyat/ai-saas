@@ -27,7 +27,6 @@ export async function POST(req: Request) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
     const returnUrl = `${baseUrl}/dashboard?payment=success`;
     const plan = PLANS[planId];
-    const userEmail = profile?.email ?? user.email ?? "user@example.com";
 
     const idempotenceKey = `${user.id}-${planId}-${Date.now()}`;
 
@@ -49,17 +48,6 @@ export async function POST(req: Request) {
           userId: user.id,
           planId,
           refCode: profile?.referred_by ?? "",
-        },
-        receipt: {
-          customer: { email: userEmail },
-          items: [
-            {
-              description: `AI Tools - ${plan.name}`,
-              quantity: "1",
-              amount: { value: plan.price.toFixed(2), currency: "RUB" },
-              vat_code: 6,
-            },
-          ],
         },
       }),
     });
