@@ -51,7 +51,6 @@ export async function POST(req: Request) {
           refCode: profile?.referred_by ?? "",
         },
         receipt: {
-          type: "online",
           customer: {
             email: userEmail,
           },
@@ -63,12 +62,13 @@ export async function POST(req: Request) {
                 value: plan.price.toFixed(2),
                 currency: "RUB",
               },
-              vat_code: 6,
+              vat_code: 1,
               payment_mode: "full_payment",
               payment_subject: "service",
             },
           ],
-          tax_system_code: 0,
+          internet: "true",
+          timezone: 2,
         },
       }),
     });
