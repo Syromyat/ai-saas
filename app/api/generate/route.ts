@@ -44,7 +44,7 @@ export async function POST(req: Request) {
         amount: { value: plan.price.toFixed(2), currency: "RUB" },
         confirmation: { type: "redirect", return_url: returnUrl },
         capture: true,
-        description: `AI Tools — тариф ${plan.name}`,
+        description: `AI Tools - ${plan.name}`,
         metadata: {
           userId: user.id,
           planId,
@@ -54,12 +54,10 @@ export async function POST(req: Request) {
           customer: { email: userEmail },
           items: [
             {
-              description: `Подписка AI Tools — тариф ${plan.name}`,
-              quantity: "1.00",
+              description: `AI Tools - ${plan.name}`,
+              quantity: "1",
               amount: { value: plan.price.toFixed(2), currency: "RUB" },
-             vat_code: 6,
-              payment_mode: "full_payment",
-              payment_subject: "service",
+              vat_code: 6,
             },
           ],
         },
