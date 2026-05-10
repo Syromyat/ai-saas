@@ -27,6 +27,7 @@ export async function POST(req: Request) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
     const returnUrl = `${baseUrl}/dashboard?payment=success`;
     const plan = PLANS[planId];
+    const userEmail = profile?.email ?? user.email ?? "user@example.com";
 
     const idempotenceKey = `${user.id}-${planId}-${Date.now()}`;
 
@@ -43,17 +44,38 @@ export async function POST(req: Request) {
         amount: { value: plan.price.toFixed(2), currency: "RUB" },
         confirmation: { type: "redirect", return_url: returnUrl },
         capture: true,
-        description: `AI Tools - ${plan.name}`,
+        description: `Подписка AI Tools - ${plan.name}`,
         metadata: {
           userId: user.id,
           planId,
           refCode: profile?.referred_by ?? "",
+        },
+        receipt: {
+          type: "online",
+          customer: {
+            email: userEmail,
+          },
+          items: [
+            {
+              description: `Подписка AI Tools - ${plan.name}`,
+              quantity: "1.00",
+              amount: {
+                value: plan.price.toFixed(2),
+                currency: "RUB",
+              },
+              vat_code: 6,
+              payment_mode: "full_payment",
+              payment_subject: "service",
+            },
+          ],
+          tax_system_code: 0,
         },
       }),
     });
 
     if (!res.ok) {
       const err = await res.json();
+      console.error("ЮKassa error:", err);
       throw new Error(err.description ?? "Ошибка создания платежа");
     }
 
