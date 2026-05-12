@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { createPayment, PLANS } from "@/lib/yukassa";
+import { PLANS } from "@/lib/yukassa";
 import type { PlanId } from "@/lib/yukassa";
 
 export async function POST(req: Request) {
@@ -36,40 +36,27 @@ export async function POST(req: Request) {
       confirmation: { type: "redirect", return_url: returnUrl },
       capture: true,
       description: `Подписка AI Tools - ${plan.name}`,
-      metadata: {
-        userId: user.id,
-        planId,
-        refCode: profile?.referred_by ?? "",
-      },
+      metadata: { userId: user.id, planId, refCode: profile?.referred_by ?? "" },
       receipt: {
-        customer: {
-          email: userEmail,
-        },
-        items: [
-          {
-            description: `Подписка AI Tools - ${plan.name}`,
-            quantity: "1",
-            amount: {
-              value: plan.price.toFixed(2),
-              currency: "RUB",
-            },
-            payment_mode: "full_payment",
-            payment_subject: "service",
-          },
-        ],
+        customer: { email: userEmail },
+        items: [{
+          description: `Подписка AI Tools - ${plan.name}`,
+          quantity: "1",
+          amount: { value: plan.price.toFixed(2), currency: "RUB" },
+          payment_mode: "full_payment",
+          payment_subject: "service",
+        }],
         internet: "true",
       },
     };
 
-    console.log("Sending to YooKassa:", JSON.stringify(paymentData, null, 2));
+    console.log("DEBUG: Отправляем на ЮKassa:", JSON.stringify(paymentData, null, 2));
 
     const res = await fetch("https://api.yookassa.ru/v3/payments", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization:
-          "Basic " +
-          btoa(`${process.env.YUKASSA_SHOP_ID}:${process.env.YUKASSA_SECRET_KEY}`),
+        Authorization: "Basic " + btoa(`${process.env.YUKASSA_SHOP_ID}:${process.env.YUKASSA_SECRET_KEY}`),
         "Idempotence-Key": idempotenceKey,
       },
       body: JSON.stringify(paymentData),
@@ -77,16 +64,15 @@ export async function POST(req: Request) {
 
     if (!res.ok) {
       const err = await res.json();
-      console.error("ЮKassa error:", err);
+      console.error("ЮKassa ошибка:", JSON.stringify(err, null, 2));
       throw new Error(err.description ?? "Ошибка создания платежа");
     }
 
     const payment = await res.json();
-
     return NextResponse.json({ url: payment.confirmation.confirmation_url });
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : "Ошибка создания платежа";
-    console.error(e);
+    console.error("Исключение:", msg);
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
