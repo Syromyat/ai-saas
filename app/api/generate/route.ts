@@ -7,17 +7,24 @@ import type { ToolId } from "@/lib/tools";
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export async function POST(req: Request) {
+  console.log("DEBUG: Начало обработки запроса");
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
+    console.log("DEBUG: Пользователь:", user?.id);
 
     if (!user) {
+      console.log("DEBUG: Пользователь не авторизован");
       return NextResponse.json({ error: "Не авторизован" }, { status: 401 });
     }
 
-    const { tool, prompt }: { tool: ToolId; prompt: string } = await req.json();
+    const body = await req.json();
+    console.log("DEBUG: Body запроса:", JSON.stringify(body));
+    const { tool, prompt }: { tool: ToolId; prompt: string } = body;
+    console.log("DEBUG: Tool:", tool, "Prompt:", prompt?.substring(0, 50));
 
     if (!prompt?.trim()) {
+      console.log("DEBUG: Промпт пустой");
       return NextResponse.json({ error: "Введите текст запроса" }, { status: 400 });
     }
 
@@ -45,6 +52,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Неверный тариф", debug: plan }, { status: 400 });
     }
 
+    console.log("DEBUG: Тариф валидный, начинаем генерацию");
     const systemPrompt = prompts[tool] ?? prompts.resume;
     const message = await client.messages.create({
       model: "claude-opus-4-7",
@@ -59,6 +67,8 @@ export async function POST(req: Request) {
         .map((b) => (b as { type: "text"; text: string }).text)
         .join("") || "Нет ответа";
 
+    console.log("DEBUG: Результат получен, длина:", result.length);
+
     // Сохраняем в историю
     try {
       await supabase.from("generations").insert({
@@ -67,6 +77,7 @@ export async function POST(req: Request) {
         prompt,
         result,
       });
+      console.log("DEBUG: История сохранена");
     } catch (e) {
       console.warn("История не сохранена:", e);
     }
