@@ -7,52 +7,20 @@ import type { ToolId } from "@/lib/tools";
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export async function POST(req: Request) {
-  console.log("DEBUG: Начало обработки запроса");
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    console.log("DEBUG: Пользователь:", user?.id);
 
     if (!user) {
-      console.log("DEBUG: Пользователь не авторизован");
       return NextResponse.json({ error: "Не авторизован" }, { status: 401 });
     }
 
-    const body = await req.json();
-    console.log("DEBUG: Body запроса:", JSON.stringify(body));
-    const { tool, prompt }: { tool: ToolId; prompt: string } = body;
-    console.log("DEBUG: Tool:", tool, "Prompt:", prompt?.substring(0, 50));
+    const { tool, prompt }: { tool: ToolId; prompt: string } = await req.json();
 
     if (!prompt?.trim()) {
-      console.log("DEBUG: Промпт пустой");
       return NextResponse.json({ error: "Введите текст запроса" }, { status: 400 });
     }
 
-    // Получаем профиль пользователя и его тариф
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("plan")
-      .eq("id", user.id)
-      .single();
-
-    if (!profile) {
-      console.log("DEBUG: Профиль не найден для пользователя:", user.id);
-      return NextResponse.json({ error: "Профиль не найден" }, { status: 404 });
-    }
-
-    // Проверяем тариф
-    const plan = profile.plan || "free";
-    console.log("DEBUG: Профиль:", JSON.stringify(profile));
-    console.log("DEBUG: План:", plan);
-    console.log("DEBUG: Тип плана:", typeof plan);
-    console.log("DEBUG: Проверка включает план?", ["free", "basic", "pro"].includes(plan));
-    
-    if (!["free", "basic", "pro"].includes(plan)) {
-      console.log("DEBUG: ОШИБКА - тариф не в списке:", plan);
-      return NextResponse.json({ error: "Неверный тариф", debug: plan }, { status: 400 });
-    }
-
-    console.log("DEBUG: Тариф валидный, начинаем генерацию");
     const systemPrompt = prompts[tool] ?? prompts.resume;
     const message = await client.messages.create({
       model: "claude-opus-4-7",
@@ -67,9 +35,6 @@ export async function POST(req: Request) {
         .map((b) => (b as { type: "text"; text: string }).text)
         .join("") || "Нет ответа";
 
-    console.log("DEBUG: Результат получен, длина:", result.length);
-
-    // Сохраняем в историю
     try {
       await supabase.from("generations").insert({
         user_id: user.id,
@@ -77,14 +42,13 @@ export async function POST(req: Request) {
         prompt,
         result,
       });
-      console.log("DEBUG: История сохранена");
     } catch (e) {
       console.warn("История не сохранена:", e);
     }
 
     return NextResponse.json({ result });
   } catch (e) {
-    console.error("Исключение при генерации:", e);
+    console.error(e);
     return NextResponse.json({ error: "Ошибка генерации. Попробуйте позже." }, { status: 500 });
   }
 }
