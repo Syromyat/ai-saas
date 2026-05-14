@@ -32,12 +32,12 @@ export default function NavClient() {
               {item.label}
             </Link>
           ))}
-          <UserMenu />
+          <UserMenuServer />
         </div>
 
         {/* Мобильное меню - бургер */}
         <div className="md:hidden flex items-center gap-4">
-          <UserMenu />
+          <UserMenuServer />
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="text-white text-2xl p-2 hover:bg-zinc-800 rounded transition-colors"
