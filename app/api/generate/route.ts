@@ -29,13 +29,20 @@ export async function POST(req: Request) {
       .single();
 
     if (!profile) {
+      console.log("DEBUG: Профиль не найден для пользователя:", user.id);
       return NextResponse.json({ error: "Профиль не найден" }, { status: 404 });
     }
 
     // Проверяем тариф
     const plan = profile.plan || "free";
+    console.log("DEBUG: Профиль:", JSON.stringify(profile));
+    console.log("DEBUG: План:", plan);
+    console.log("DEBUG: Тип плана:", typeof plan);
+    console.log("DEBUG: Проверка включает план?", ["free", "basic", "pro"].includes(plan));
+    
     if (!["free", "basic", "pro"].includes(plan)) {
-      return NextResponse.json({ error: "Неверный тариф" }, { status: 400 });
+      console.log("DEBUG: ОШИБКА - тариф не в списке:", plan);
+      return NextResponse.json({ error: "Неверный тариф", debug: plan }, { status: 400 });
     }
 
     const systemPrompt = prompts[tool] ?? prompts.resume;
@@ -66,7 +73,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ result });
   } catch (e) {
-    console.error(e);
+    console.error("Исключение при генерации:", e);
     return NextResponse.json({ error: "Ошибка генерации. Попробуйте позже." }, { status: 500 });
   }
 }
