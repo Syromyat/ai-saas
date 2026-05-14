@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import UserMenu from '@/components/UserMenu';
+import UserMenuServer from '@/components/UserMenuServer';
 
 export default function NavClient() {
   const [isOpen, setIsOpen] = useState(false);
