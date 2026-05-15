@@ -10,8 +10,8 @@ export interface Plan {
 }
 
 export const PLANS: Record<PlanId, Plan> = {
-  basic: { id: "basic", name: "Basic",  price: 499,  durationDays: 30 },
-  pro:   { id: "pro",   name: "PRO",    price: 990,  durationDays: 30 },
+  basic: { id: "basic", name: "Basic",  price: 299,  durationDays: 30 },
+  pro:   { id: "pro",   name: "PRO",    price: 499,  durationDays: 30 },
 };
 
 export interface YookassaPayment {
