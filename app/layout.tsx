@@ -1,5 +1,3 @@
-'use client';
-
 import type { Metadata } from "next";
 import { Syne, DM_Sans } from "next/font/google";
 import "./globals.css";
