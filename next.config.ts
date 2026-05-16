@@ -1,19 +1,29 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [{ protocol: "https", hostname: "*.supabase.co" }],
-  },
   reactStrictMode: true,
-  async headers() {
+  swcMinify: true,
+  compress: true,
+  poweredByHeader: false,
+  productionBrowserSourceMaps: false,
+  headers: async () => {
     return [
+      {
+        source: "/manifest.json",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/manifest+json",
+          },
+        ],
+      },
       {
         source: "/(.*)",
         headers: [
-          { key: "X-Frame-Options",       value: "DENY" },
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Referrer-Policy",        value: "strict-origin-when-cross-origin" },
-          { key: "Permissions-Policy",     value: "camera=(), microphone=(), geolocation=()" },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, s-maxage=86400",
+          },
         ],
       },
     ];
