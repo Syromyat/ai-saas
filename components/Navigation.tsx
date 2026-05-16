@@ -27,22 +27,22 @@ export default function Navigation() {
         {/* Десктоп меню */}
         <div className="hidden md:flex gap-6 items-center">
           <Link href="/dashboard" className="hover:text-purple-400">
-            Dashboard
+            Кабинет
           </Link>
           <Link href="/pricing" className="hover:text-purple-400">
-            Pricing
+            Тарифы
           </Link>
           <Link href="/history" className="hover:text-purple-400">
-            History
+            История
           </Link>
           <Link href="/referral" className="hover:text-purple-400">
-            Referral
+            Партнёрам
           </Link>
           <button
             onClick={handleLogout}
             className="bg-red-600 px-4 py-2 rounded hover:bg-red-700"
           >
-            Logout
+            Выход
           </button>
         </div>
 
@@ -64,34 +64,34 @@ export default function Navigation() {
               className="block py-2 hover:text-purple-400"
               onClick={() => setIsOpen(false)}
             >
-              Dashboard
+              Кабинет
             </Link>
             <Link
               href="/pricing"
               className="block py-2 hover:text-purple-400"
               onClick={() => setIsOpen(false)}
             >
-              Pricing
+              Тарифы
             </Link>
             <Link
               href="/history"
               className="block py-2 hover:text-purple-400"
               onClick={() => setIsOpen(false)}
             >
-              History
+              История
             </Link>
             <Link
               href="/referral"
               className="block py-2 hover:text-purple-400"
               onClick={() => setIsOpen(false)}
             >
-              Referral
+              Партнёрам
             </Link>
             <button
               onClick={handleLogout}
               className="w-full bg-red-600 px-4 py-2 rounded hover:bg-red-700 text-left"
             >
-              Logout
+              Выход
             </button>
           </div>
         </div>
