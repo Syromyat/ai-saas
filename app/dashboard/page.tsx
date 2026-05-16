@@ -1,6 +1,7 @@
 import GeneratorForm from "@/components/GeneratorForm";
 
 export const metadata = { title: "Личный кабинет — AI Tools" };
+export const revalidate = 0;
 
 export default function DashboardPage() {
   return (
