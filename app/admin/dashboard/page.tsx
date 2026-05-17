@@ -12,20 +12,15 @@ export default function AdminDashboard() {
     const getStats = async () => {
       const supabase = createClient();
 
-      // Получаем всех пользователей
       const { data: users } = await supabase.from('profiles').select('*');
-      
-      // Получаем все платежи
       const { data: payments } = await supabase.from('payments').select('*');
 
-      // Подсчитываем статистику
       const totalUsers = users?.length || 0;
       const paidUsers = users?.filter((u: any) => u.plan !== 'free').length || 0;
       const freeUsers = totalUsers - paidUsers;
       const totalRevenue = payments?.reduce((sum: number, p: any) => sum + (p.amount || 0), 0) || 0;
       const withReferrer = users?.filter((u: any) => u.referred_by).length || 0;
 
-      // Группируем по источникам
       const sources: Record<string, number> = {};
       users?.forEach((u: any) => {
         const source = u.referred_by || 'Прямой трафик';
@@ -77,9 +72,10 @@ export default function AdminDashboard() {
         
         <div className="space-y-4">
           {Object.entries(stats.sources)
-            .sort((a, b) => (b[1] as number) - (a[1] as number))
-            .map(([source, count]) => {
-              const percentage = ((count as number / stats.totalUsers) * 100).toFixed(1);
+            .sort((a: [string, unknown], b: [string, unknown]) => (b[1] as number) - (a[1] as number))
+            .map(([source, count]: [string, unknown]) => {
+              const countNum = count as number;
+              const percentage = ((countNum / stats.totalUsers) * 100).toFixed(1);
               return (
                 <div key={source}>
                   <div className="flex justify-between items-center mb-2">
@@ -88,7 +84,7 @@ export default function AdminDashboard() {
                       {source}
                     </span>
                     <span className="text-sm text-gray-400">
-                      {count} ({percentage}%)
+                      {countNum} ({percentage}%)
                     </span>
                   </div>
                   <div className="w-full h-2 bg-slate-700 rounded-full overflow-hidden">
