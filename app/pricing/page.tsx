@@ -126,7 +126,7 @@ export default function PricingPage() {
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl pointer-events-none"></div>
 
               {plan.popular && (
-                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-sm font-bold shadow-lg z-50">
+                <div className="absolute top-6 left-1/2 transform -translate-x-1/2 px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-base font-bold shadow-lg z-50">
                   🌟 Популярный
                 </div>
               )}
