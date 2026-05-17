@@ -3,10 +3,12 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { useEffect, useState } from 'react';
+import BuyButton from '@/components/BuyButton';
 
 export default function PricingPage() {
   const [user, setUser] = useState<any>(null);
   const [currentPlan, setCurrentPlan] = useState('free');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getUser = async () => {
@@ -25,6 +27,7 @@ export default function PricingPage() {
           setCurrentPlan(profile.plan || 'free');
         }
       }
+      setLoading(false);
     };
 
     getUser();
@@ -36,6 +39,7 @@ export default function PricingPage() {
       price: '0',
       description: 'Идеально для пробы',
       requests: '5 запросов/день',
+      planId: null as null,
       features: [
         '✓ 5 запросов в день',
         '✓ 3 инструмента',
@@ -43,8 +47,6 @@ export default function PricingPage() {
         '✗ Приоритет',
         '✗ API доступ'
       ],
-      cta: 'Начать бесплатно',
-      ctaLink: '/login',
       popular: false
     },
     {
@@ -52,6 +54,7 @@ export default function PricingPage() {
       price: '299',
       description: 'Для активных пользователей',
       requests: '100 запросов/день',
+      planId: 'basic' as const,
       features: [
         '✓ 100 запросов в день',
         '✓ Все инструменты',
@@ -59,8 +62,6 @@ export default function PricingPage() {
         '✓ Приоритет',
         '✗ API доступ'
       ],
-      cta: 'Выбрать Basic',
-      ctaLink: '/pricing?plan=basic',
       popular: true
     },
     {
@@ -68,6 +69,7 @@ export default function PricingPage() {
       price: '499',
       description: 'Для профессионалов',
       requests: 'Безлимитные запросы',
+      planId: 'pro' as const,
       features: [
         '✓ Безлимитные запросы',
         '✓ Все инструменты',
@@ -75,11 +77,20 @@ export default function PricingPage() {
         '✓ Приоритет',
         '✓ API доступ'
       ],
-      cta: 'Выбрать Pro',
-      ctaLink: '/pricing?plan=pro',
       popular: false
     }
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white">Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 text-white py-20 px-6">
@@ -115,7 +126,7 @@ export default function PricingPage() {
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl pointer-events-none"></div>
 
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-6 py-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-sm font-bold shadow-lg">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-6 py-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-sm font-bold shadow-lg z-20">
                   🌟 Популярный
                 </div>
               )}
@@ -135,16 +146,9 @@ export default function PricingPage() {
                 </div>
 
                 {/* CTA Button */}
-                <Link
-                  href={plan.ctaLink}
-                  className={`block w-full text-center py-4 rounded-lg font-bold mb-8 transition-all transform hover:scale-105 ${
-                    plan.popular
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:shadow-2xl hover:shadow-purple-500/50'
-                      : 'border-2 border-blue-400 text-blue-400 hover:bg-blue-400/10'
-                  }`}
-                >
-                  {currentPlan === plan.name.toLowerCase() ? '✓ Текущий тариф' : plan.cta}
-                </Link>
+                <div className="mb-8">
+                  <BuyButton planId={plan.planId} currentPlan={currentPlan} />
+                </div>
 
                 {/* Features List */}
                 <div className="space-y-3">
@@ -168,10 +172,10 @@ export default function PricingPage() {
           
           <div className="space-y-6">
             {[
-              { q: 'Могу ли я отменить подписку?', a: 'Да, отмену можно сделать в любой момент в личном кабинете.' },
-              { q: 'Как я буду платить?', a: 'Мы принимаем платежи через ЮKassa: карты, электронные кошельки.' },
-              { q: 'Есть ли пробный период?', a: 'Да! Начните с бесплатного плана и попробуйте все возможности.' },
-              { q: 'Можно ли увеличить лимиты?', a: 'Конечно! Просто выберите более высокий тариф в любой момент.' }
+              { q: 'Могу ли я отменить подписку?', a: 'Да, отмену можно сделать в любой момент в личном кабинете без штрафов.' },
+              { q: 'Как я буду платить?', a: 'Мы принимаем платежи через ЮKassa: карты, электронные кошельки и мобильные платежи.' },
+              { q: 'Есть ли пробный период?', a: 'Да! Начните с бесплатного плана и попробуйте все возможности без ограничений.' },
+              { q: 'Можно ли увеличить лимиты?', a: 'Конечно! Просто выберите более высокий тариф в любой момент. Переплата не будет.' }
             ].map((item, idx) => (
               <div key={idx} className="p-6 rounded-xl bg-slate-800/50 border border-blue-400/20 hover:border-blue-400/50 transition-all">
                 <h4 className="font-bold mb-2 text-blue-400">{item.q}</h4>
