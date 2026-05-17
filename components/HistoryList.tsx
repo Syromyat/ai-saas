@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import type { Tool } from "@/lib/tools";
+import { useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import type { Tool } from '@/lib/tools';
 
 interface Generation {
   id: number;
@@ -19,12 +19,12 @@ interface Props {
 }
 
 const TOOL_LABELS: Record<string, string> = {
-  resume:    "📄 Резюме",
-  instagram: "📱 Контент",
-  congrats:  "🎉 Поздравления",
-  business:  "💡 Бизнес",
-  legal:     "⚖️ Юрист",
-  tutor:     "🎓 Репетитор",
+  resume: '📄 Резюме',
+  instagram: '📱 Контент',
+  congrats: '🎉 Поздравления',
+  business: '💡 Бизнес',
+  legal: '⚖️ Юрист',
+  tutor: '🎓 Репетитор',
 };
 
 export default function HistoryList({ generations, tools, activeFilter }: Props) {
@@ -35,7 +35,7 @@ export default function HistoryList({ generations, tools, activeFilter }: Props)
 
   function setFilter(val: string) {
     const params = new URLSearchParams();
-    if (val !== "all") params.set("tool", val);
+    if (val !== 'all') params.set('tool', val);
     router.push(`${pathname}?${params.toString()}`);
   }
 
@@ -47,89 +47,117 @@ export default function HistoryList({ generations, tools, activeFilter }: Props)
 
   return (
     <div>
-      {/* Фильтры */}
-      <div className="flex flex-wrap gap-2 mb-8">
+      {/* Filter Chips */}
+      <div className="flex flex-wrap gap-3 mb-8">
         <FilterChip
           label="Все"
-          active={activeFilter === "all"}
-          onClick={() => setFilter("all")}
+          active={activeFilter === 'all'}
+          onClick={() => setFilter('all')}
         />
         {tools.map((t) => (
           <FilterChip
             key={t.id}
-            label={`${t.icon} ${t.name.replace("ИИ ", "")}`}
+            label={`${t.icon} ${t.name.replace('ИИ ', '')}`}
             active={activeFilter === t.id}
             onClick={() => setFilter(t.id)}
           />
         ))}
       </div>
 
-      {/* Список */}
+      {/* History List */}
       {generations.length === 0 ? (
-        <div className="text-center py-20 text-zinc-600">
-          <p className="text-4xl mb-4">🗂️</p>
-          <p className="text-lg">История пуста</p>
-          <p className="text-sm mt-2">Сделайте первый запрос в кабинете</p>
+        <div className="text-center py-24">
+          <div className="text-6xl mb-6">📭</div>
+          <h3 className="text-xl font-bold mb-2">История пуста</h3>
+          <p className="text-gray-400">Сделайте первый запрос в личном кабинете, чтобы увидеть историю</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {generations.map((g) => {
             const isOpen = expanded === g.id;
             const date = new Date(g.created_at);
+            const toolIcon = tools.find((t) => t.id === g.tool)?.icon ?? '🤖';
+
             return (
               <div
                 key={g.id}
-                className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden transition-all"
+                className={`group rounded-2xl border transition-all duration-300 overflow-hidden ${
+                  isOpen
+                    ? 'border-blue-400 bg-gradient-to-br from-slate-800/50 to-slate-900/50 shadow-lg shadow-blue-500/10'
+                    : 'border-blue-400/20 bg-gradient-to-br from-slate-800/30 to-slate-900/30 hover:border-blue-400/50 hover:shadow-lg hover:shadow-blue-500/10'
+                }`}
               >
                 {/* Header */}
                 <button
                   onClick={() => setExpanded(isOpen ? null : g.id)}
-                  className="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-zinc-800/50 transition-colors"
+                  className="w-full flex items-center gap-4 px-6 py-5 text-left hover:bg-slate-700/30 transition-all duration-300"
                 >
-                  <span className="text-lg shrink-0">
-                    {tools.find((t) => t.id === g.tool)?.icon ?? "🤖"}
+                  <span className="text-2xl shrink-0 group-hover:scale-110 transition-transform">
+                    {toolIcon}
                   </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-white truncate">{g.prompt}</p>
-                    <p className="text-xs text-zinc-500 mt-0.5">
-                      {TOOL_LABELS[g.tool] ?? g.tool} ·{" "}
-                      {date.toLocaleDateString("ru-RU", {
-                        day: "numeric", month: "short",
-                      })}{" "}
-                      {date.toLocaleTimeString("ru-RU", {
-                        hour: "2-digit", minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-                  <span className="text-zinc-600 text-xs shrink-0">
-                    {isOpen ? "▲" : "▼"}
-                  </span>
-                </button>
 
-                {/* Expanded result */}
-                {isOpen && (
-                  <div className="px-5 pb-5 border-t border-zinc-800">
-                    <p className="text-xs uppercase tracking-widest text-zinc-600 font-semibold mt-4 mb-2">
-                      Запрос
-                    </p>
-                    <p className="text-sm text-zinc-300 whitespace-pre-wrap mb-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-white truncate group-hover:text-blue-300 transition-colors">
                       {g.prompt}
                     </p>
-                    <p className="text-xs uppercase tracking-widest text-zinc-600 font-semibold mb-2">
-                      Результат
+                    <p className="text-xs text-gray-500 mt-1">
+                      <span className="text-blue-400">{TOOL_LABELS[g.tool] ?? g.tool}</span>
+                      {' '} • {' '}
+                      <span>
+                        {date.toLocaleDateString('ru-RU', {
+                          day: 'numeric',
+                          month: 'short',
+                        })}{' '}
+                        {date.toLocaleTimeString('ru-RU', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
                     </p>
-                    <p className="text-sm text-zinc-200 whitespace-pre-wrap leading-relaxed">
-                      {g.result}
-                    </p>
+                  </div>
+
+                  <div className="text-gray-400 group-hover:text-blue-400 transition-colors shrink-0">
+                    {isOpen ? '▲' : '▼'}
+                  </div>
+                </button>
+
+                {/* Expanded Content */}
+                {isOpen && (
+                  <div className="px-6 pb-6 border-t border-blue-400/10 pt-6 space-y-6 bg-gradient-to-b from-slate-800/20 to-slate-900/40">
+                    {/* Prompt Section */}
+                    <div>
+                      <p className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-3">
+                        📝 Ваш запрос
+                      </p>
+                      <div className="p-4 rounded-lg bg-slate-900/50 border border-blue-400/10">
+                        <p className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed font-mono">
+                          {g.prompt}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Result Section */}
+                    <div>
+                      <p className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-3">
+                        ✨ Результат
+                      </p>
+                      <div className="p-4 rounded-lg bg-slate-900/50 border border-blue-400/10">
+                        <p className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed font-mono">
+                          {g.result}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Copy Button */}
                     <button
                       onClick={() => copyResult(g.id, g.result)}
-                      className={`mt-4 text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+                      className={`w-full py-3 rounded-lg font-bold text-sm transition-all duration-300 ${
                         copied === g.id
-                          ? "border-green-700 text-green-400 bg-green-900/20"
-                          : "border-zinc-700 text-zinc-400 hover:border-violet-500 hover:text-violet-400"
+                          ? 'bg-green-500/20 border border-green-400/50 text-green-300'
+                          : 'bg-blue-500/20 border border-blue-400/50 text-blue-300 hover:bg-blue-500/30'
                       }`}
                     >
-                      {copied === g.id ? "✓ Скопировано" : "Копировать результат"}
+                      {copied === g.id ? '✓ Скопировано в буфер' : '📋 Копировать результат'}
                     </button>
                   </div>
                 )}
@@ -154,10 +182,10 @@ function FilterChip({
   return (
     <button
       onClick={onClick}
-      className={`text-sm px-4 py-1.5 rounded-full border transition-colors ${
+      className={`text-sm px-5 py-2 rounded-lg font-semibold transition-all duration-300 ${
         active
-          ? "bg-violet-600 border-violet-600 text-white"
-          : "bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-white"
+          ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/30'
+          : 'bg-slate-800/50 border border-blue-400/20 text-gray-400 hover:border-blue-400/50 hover:text-gray-200'
       }`}
     >
       {label}
