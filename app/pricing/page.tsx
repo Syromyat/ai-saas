@@ -147,7 +147,11 @@ export default function PricingPage() {
 
                 {/* CTA Button */}
                 <div className="mb-8">
-                  <BuyButton planId={plan.planId} currentPlan={currentPlan} />
+                  <BuyButton 
+                    planId={plan.planId} 
+                    currentPlan={currentPlan}
+                    planName={plan.name}
+                  />
                 </div>
 
                 {/* Features List */}
