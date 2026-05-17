@@ -6,10 +6,12 @@ import type { PlanId } from '@/lib/yukassa';
 interface Props {
   planId: PlanId | null;
   currentPlan?: string;
+  planName?: string;
 }
 
-export default function BuyButton({ planId, currentPlan }: Props) {
+export default function BuyButton({ planId, currentPlan, planName }: Props) {
   const [loading, setLoading] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   if (!planId) {
     return (
@@ -39,37 +41,82 @@ export default function BuyButton({ planId, currentPlan }: Props) {
       } else {
         alert(data.error ?? 'Ошибка оплаты');
         setLoading(false);
+        setShowConfirm(false);
       }
     } catch {
       alert('Ошибка сети');
       setLoading(false);
+      setShowConfirm(false);
     }
   }
 
   return (
-    <button
-      onClick={handleBuy}
-      disabled={loading || isCurrent}
-      className={`w-full py-3 rounded-lg font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
-        isCurrent
-          ? 'bg-gray-900/50 border-2 border-gray-600 text-gray-400 cursor-default'
-          : 'bg-gradient-to-r from-blue-500 to-purple-500 text-white border-2 border-blue-500 hover:shadow-lg hover:shadow-blue-500/50'
-      }`}
-    >
-      {loading ? (
-        <>
-          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-          Переход к оплате...
-        </>
-      ) : isCurrent ? (
-        <>
-          ✓ Текущий тариф
-        </>
-      ) : (
-        <>
-          💳 Оплатить
-        </>
+    <>
+      <button
+        onClick={() => setShowConfirm(true)}
+        disabled={loading || isCurrent}
+        className={`w-full py-3 rounded-lg font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+          isCurrent
+            ? 'bg-gray-900/50 border-2 border-gray-600 text-gray-400 cursor-default'
+            : 'bg-gradient-to-r from-blue-500 to-purple-500 text-white border-2 border-blue-500 hover:shadow-lg hover:shadow-blue-500/50'
+        }`}
+      >
+        {isCurrent ? (
+          <>
+            ✓ Текущий тариф
+          </>
+        ) : (
+          <>
+            💳 Выбрать
+          </>
+        )}
+      </button>
+
+      {/* Confirmation Modal */}
+      {showConfirm && !isCurrent && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 border border-blue-400/30 rounded-3xl p-8 max-w-md w-full shadow-2xl">
+            <h3 className="text-2xl font-bold text-white mb-2">
+              Выбрать тариф {planName}?
+            </h3>
+            <p className="text-gray-400 mb-6">
+              Вы будете перенаправлены на страницу оплаты через ЮKassa
+            </p>
+
+            {/* Plan Details */}
+            <div className="p-4 rounded-xl bg-slate-700/50 border border-blue-400/20 mb-6">
+              <p className="text-sm text-gray-400 mb-2">Выбранный тариф:</p>
+              <p className="text-xl font-bold text-blue-300">{planName}</p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="flex-1 py-3 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-800/50 transition font-semibold"
+              >
+                Отменить
+              </button>
+              <button
+                onClick={handleBuy}
+                disabled={loading}
+                className="flex-1 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold hover:shadow-lg hover:shadow-blue-500/50 transition disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Переход...
+                  </>
+                ) : (
+                  <>
+                    ✓ Подтвердить
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
-    </button>
+    </>
   );
 }
