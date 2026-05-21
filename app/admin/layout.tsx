@@ -29,17 +29,20 @@ export default async function AdminLayout({
           <Link href="/admin/dashboard" className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             🛡️ АДМИН
           </Link>
-          <div className="flex gap-6 items-center">
-            <Link href="/admin/dashboard" className="text-gray-400 hover:text-white transition">
-              📊 Статистика
-            </Link>
-            <Link href="/admin/leads" className="text-gray-400 hover:text-white transition">
-              👥 Лиды
-            </Link>
-            <Link href="/" className="text-gray-400 hover:text-white transition">
-              🏠 На сайт
-            </Link>
-          </div>
+         <div className="flex gap-6 items-center">
+  <Link href="/admin/dashboard" className="text-gray-400 hover:text-white transition">
+    📊 Статистика
+  </Link>
+  <Link href="/admin/leads" className="text-gray-400 hover:text-white transition">
+    👥 Лиды
+  </Link>
+  <Link href="/admin/partners" className="text-gray-400 hover:text-white transition">
+    🤝 Партнёры
+  </Link>
+  <Link href="/" className="text-gray-400 hover:text-white transition">
+    🏠 На сайт
+  </Link>
+</div>
         </div>
       </nav>
 
