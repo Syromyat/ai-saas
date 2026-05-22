@@ -1,4 +1,4 @@
-[22.05.2026 23:00] Андрей Сыромятников: 'use client';
+'use client';
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
