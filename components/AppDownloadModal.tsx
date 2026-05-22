@@ -1,28 +1,20 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 
 export default function AppDownloadModal() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isNative, setIsNative] = useState(false);
 
   useEffect(() => {
-    // Проверяем был ли уже показан модал
     const modalShown = localStorage.getItem('appModalShown');
     const lastShown = modalShown ? parseInt(modalShown) : 0;
     const now = Date.now();
 
-    // Показываем модал только раз в 7 дней
     if (now - lastShown > 7 * 24 * 60 * 60 * 1000) {
-      // Проверяем что это не нативное приложение
       const userAgent = navigator.userAgent.toLowerCase();
       const isApp = userAgent.includes('ai-tools-app');
-      
-      setIsNative(isApp);
-      
+
       if (!isApp) {
-        // Показываем модал с задержкой 2 секунды
         const timer = setTimeout(() => {
           setIsOpen(true);
           localStorage.setItem('appModalShown', now.toString());
@@ -37,7 +29,7 @@ export default function AppDownloadModal() {
     setIsOpen(false);
   }
 
-  if (!isOpen || isNative) {
+  if (!isOpen) {
     return null;
   }
 
