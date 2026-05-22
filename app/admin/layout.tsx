@@ -15,7 +15,7 @@ export default async function AdminLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   // Проверяем есть ли это админ
-  const ADMIN_EMAILS = ['g4131313@gmail.com', 'Cap.lol.0809@gmail.com'];
+  const ADMIN_EMAILS = ['g4131313@gmail.com'];
 
   if (!user || !ADMIN_EMAILS.includes(user.email!)) {
     redirect('/');
