@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { initializeTracking } from '@/lib/partner-tracking';
+import AppDownloadModal from '@/components/AppDownloadModal';
 
 export default function Home() {
   const [user, setUser] = useState<any>(null);
@@ -22,6 +23,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 text-white">
+      <AppDownloadModal />
+
       {/* Animated Background */}
       <div className="fixed inset-0 opacity-20 pointer-events-none">
         <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-3xl animate-pulse"></div>
