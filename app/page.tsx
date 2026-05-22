@@ -1,226 +1,228 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { initializeTracking } from '@/lib/partner-tracking';
 
-export default function HomePage() {
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+export default function Home() {
+  const [user, setUser] = useState<any>(null);
 
-  const features = [
-    { icon: '✍️', title: 'ИИ Резюме', desc: 'Создавайте профессиональное резюме за минуту' },
-    { icon: '📝', title: 'ИИ Контент', desc: 'Напишите статьи, посты и рассказы' },
-    { icon: '🎉', title: 'Поздравления', desc: 'Оригинальные поздравления для любого случая' },
-    { icon: '💡', title: 'Бизнес идеи', desc: 'Найдите свою нишу для заработка' },
-    { icon: '⚖️', title: 'Юридическая помощь', desc: 'Ответы на правовые вопросы' },
-    { icon: '🎓', title: 'ИИ Репетитор', desc: 'Объяснение любой темы' },
-  ];
+  useEffect(() => {
+    initializeTracking();
 
-  const benefits = [
-    { icon: '⚡', title: 'Скорость', desc: 'Результаты за секунды' },
-    { icon: '🛡️', title: 'Надёжность', desc: '99.9% uptime гарантия' },
-    { icon: '🤖', title: 'AI Automation', desc: 'Полная автоматизация' },
-    { icon: '💰', title: 'Доступность', desc: 'Цены для всех' },
-  ];
+    const getUser = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
 
-  const pricingPlans = [
-    { name: 'FREE', price: '0₽', requests: '5 запросов/день', features: ['3 инструмента', 'История'] },
-    { name: 'BASIC', price: '299₽', requests: '100 запросов/день', features: ['Все инструменты', 'История', 'Приоритет'], popular: true },
-    { name: 'PRO', price: '499₽', requests: 'Безлимит', features: ['Все инструменты', 'История', 'Приоритет', 'API доступ'] },
-  ];
+    getUser();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 text-white overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 text-white">
       {/* Animated Background */}
-      <div className="fixed inset-0 opacity-30 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-screen filter blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+      <div className="fixed inset-0 opacity-20 pointer-events-none">
+        <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-screen filter blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
       </div>
 
-      {/* Content */}
-      <div className="relative z-10">
-        {/* HERO SECTION */}
-        <section className="min-h-screen flex items-center justify-center px-6 py-20">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Side */}
-            <div className="space-y-8">
-              <div>
-                <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
-                  ИИ-инструменты для <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">работы и жизни</span>
-                </h1>
-                <p className="text-xl text-gray-300">Все возможности искусственного интеллекта в одном сервисе. Экономьте время, повышайте продуктивность, достигайте целей.</p>
-              </div>
+      {/* Hero Section */}
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 py-20">
+        <div className="text-center max-w-4xl mx-auto mb-16">
+          <h1 className="text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+            Умные <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">ИИ инструменты</span> для работы
+          </h1>
+          <p className="text-xl text-gray-400 mb-12">
+            Генерируй тексты, анализируй информацию, создавай контент за секунды. Работает как мозг, думает как человек.
+          </p>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/login" className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg font-semibold hover:shadow-2xl hover:shadow-blue-500/50 transition-all transform hover:scale-105">
-                  Попробовать бесплатно
-                </Link>
-                <Link href="#features" className="px-8 py-4 border-2 border-blue-400 rounded-lg font-semibold hover:bg-blue-400/10 transition-all">
-                  Смотреть возможности
-                </Link>
-              </div>
-
-              <div className="flex flex-col gap-3 text-sm text-gray-400">
-                <div>✨ ИИ работает 24/7 для вас</div>
-                <div>⚡ Экономьте часы вашего времени</div>
-                <div>🚀 100+ AI функций в одном месте</div>
-              </div>
-            </div>
-
-            {/* Right Side - Dashboard Preview */}
-            <div className="relative hidden lg:block">
-              <div className="relative w-full h-96 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-blue-400/20 shadow-2xl shadow-blue-500/20 p-6 backdrop-blur-xl">
-                <div className="space-y-4">
-                  <div className="h-10 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg animate-pulse"></div>
-                  <div className="grid grid-cols-2 gap-4">
-                    {[1,2,3,4].map(i => (
-                      <div key={i} className="h-24 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-lg border border-blue-400/10 animate-pulse" style={{animationDelay: `${i*0.2}s`}}></div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* FEATURES SECTION */}
-        <section id="features" className="py-20 px-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-4">Что умеет IAPRO</h2>
-              <p className="text-gray-400 text-lg">Полный набор AI-инструментов для решения любых задач</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {features.map((feature, idx) => (
-                <div
-                  key={idx}
-                  onMouseEnter={() => setHoveredCard(idx)}
-                  onMouseLeave={() => setHoveredCard(null)}
-                  className="group relative p-6 rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-blue-400/20 backdrop-blur-xl hover:border-purple-400/50 transition-all transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20"
+          {/* CTA Buttons */}
+          <div className="flex flex-wrap gap-4 justify-center mb-16">
+            {user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="px-12 py-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg font-bold text-lg hover:shadow-2xl hover:shadow-purple-500/50 transition-all transform hover:scale-105"
                 >
-                  <div className="text-4xl mb-4">{feature.icon}</div>
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-gray-400">{feature.desc}</p>
-                  {hoveredCard === idx && (
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 pointer-events-none"></div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* WHY US SECTION */}
-        <section className="py-20 px-6">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-16">Почему выбирают IAPRO</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {benefits.map((benefit, idx) => (
-                <div key={idx} className="p-8 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-blue-400/20 text-center">
-                  <div className="text-5xl mb-4">{benefit.icon}</div>
-                  <h3 className="text-xl font-bold mb-2">{benefit.title}</h3>
-                  <p className="text-gray-400">{benefit.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* PRICING SECTION */}
-        <section className="py-20 px-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-4">Простые тарифы</h2>
-              <p className="text-gray-400 text-lg">Начните бесплатно, улучшайте когда нужно</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {pricingPlans.map((plan, idx) => (
-                <div
-                  key={idx}
-                  className={`relative p-8 rounded-3xl backdrop-blur-xl transition-all transform hover:scale-105 ${
-                    plan.popular
-                      ? 'bg-gradient-to-br from-blue-600/30 to-purple-600/30 border-2 border-purple-400 shadow-2xl shadow-purple-500/30 lg:scale-105'
-                      : 'bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-blue-400/20'
-                  }`}
+                  📊 Личный кабинет
+                </Link>
+                <Link
+                  href="/pricing"
+                  className="px-12 py-4 border-2 border-blue-400 rounded-lg font-bold text-lg hover:bg-blue-400/10 transition"
                 >
-                  {plan.popular && <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-sm font-bold">Популярный</div>}
-                  
-                  <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                  <div className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">{plan.price}</div>
-                  <p className="text-gray-400 mb-6">{plan.requests}</p>
-                  
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-2 text-gray-300">
-                        <span className="text-blue-400">✓</span> {feature}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Link href="/login" className={`block text-center py-3 rounded-lg font-semibold transition-all ${
-                    plan.popular
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:shadow-2xl hover:shadow-purple-500/50'
-                      : 'border border-blue-400 hover:bg-blue-400/10'
-                  }`}>
-                    Начать
-                  </Link>
-                </div>
-              ))}
-            </div>
+                  💳 Выбрать тариф
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="px-12 py-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg font-bold text-lg hover:shadow-2xl hover:shadow-purple-500/50 transition-all transform hover:scale-105"
+                >
+                  🚀 Начать бесплатно
+                </Link>
+                <Link
+                  href="/pricing"
+                  className="px-12 py-4 border-2 border-blue-400 rounded-lg font-bold text-lg hover:bg-blue-400/10 transition"
+                >
+                  💳 Тарифы
+                </Link>
+              </>
+            )}
           </div>
-        </section>
 
-        {/* CTA SECTION */}
-        <section className="py-20 px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">Попробуйте будущее уже сегодня</h2>
-            <p className="text-xl text-gray-400 mb-8">Присоединитесь к тысячам пользователей, которые уже экономят время с помощью IAPRO</p>
-            <Link href="/login" className="inline-block px-12 py-4 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg font-bold text-lg hover:shadow-2xl hover:shadow-purple-500/50 transition-all transform hover:scale-105">
-              Перейти на платформу
+          {/* Partner Program Button */}
+          <div className="text-center mb-12">
+            <p className="text-gray-400 mb-4">Хочешь зарабатывать вместе с нами?</p>
+            <Link
+              href="/partner/register"
+              className="inline-block px-8 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-green-500 font-bold hover:shadow-lg hover:shadow-emerald-500/50 transition-all transform hover:scale-105"
+            >
+              🤝 Присоединиться к партнёрской программе
             </Link>
           </div>
-        </section>
+        </div>
 
-        {/* FOOTER */}
-        <footer className="border-t border-blue-400/10 py-12 px-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-              <div>
-                <h4 className="font-bold mb-4">IAPRO</h4>
-                <p className="text-gray-400 text-sm">Интеллектуальные инструменты нового поколения</p>
+        {/* Features */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mt-20">
+          {[
+            {
+              icon: '✨',
+              title: 'Быстро',
+              description: 'Результаты за секунды',
+            },
+            {
+              icon: '🎯',
+              title: 'Точно',
+              description: 'Высокое качество контента',
+            },
+            {
+              icon: '🚀',
+              title: 'Просто',
+              description: 'Интуитивный интерфейс',
+            },
+          ].map((feature, i) => (
+            <div
+              key={i}
+              className="p-8 rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-blue-400/20 hover:border-blue-400/50 transition text-center"
+            >
+              <div className="text-4xl mb-4">{feature.icon}</div>
+              <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+              <p className="text-gray-400">{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Pricing Preview */}
+      <div className="relative z-10 py-20 px-6 max-w-6xl mx-auto">
+        <h2 className="text-4xl font-bold text-center mb-16">
+          Простые <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">тарифы</span>
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          {[
+            { name: 'СТАРТ', price: '0₽', features: ['5 запросов/день', 'История', '3 инструмента'] },
+            { name: 'БАЗОВЫЙ', price: '299₽', features: ['100 запросов/день', 'История', 'Все инструменты'], popular: true },
+            { name: 'PRO', price: '499₽', features: ['Безлимит', 'История', 'API доступ'] },
+          ].map((plan, i) => (
+            <div
+              key={i}
+              className={`relative p-8 rounded-3xl ${
+                plan.popular
+                  ? 'md:scale-105 bg-gradient-to-br from-blue-600/20 to-purple-600/20 border-2 border-purple-400'
+                  : 'bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-blue-400/20'
+              }`}
+            >
+              {plan.popular && (
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-xs font-bold">
+                  🌟 Популярный
+                </div>
+              )}
+              <h3 className="text-2xl font-bold mb-4">{plan.name}</h3>
+              <p className="text-4xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                {plan.price}
+              </p>
+              <ul className="space-y-3 mb-8">
+                {plan.features.map((f, j) => (
+                  <li key={j} className="text-gray-400">✓ {f}</li>
+                ))}
+              </ul>
+              <Link
+                href="/login"
+                className="block w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-center font-bold hover:shadow-lg transition"
+              >
+                Выбрать
+              </Link>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center">
+          <Link
+            href="/pricing"
+            className="inline-block px-12 py-4 border-2 border-blue-400 rounded-lg font-bold hover:bg-blue-400/10 transition"
+          >
+            Все тарифы
+          </Link>
+        </div>
+      </div>
+
+      {/* Partner Program Section */}
+      <div className="relative z-10 py-20 px-6 max-w-6xl mx-auto">
+        <div className="p-12 rounded-3xl bg-gradient-to-r from-emerald-900/30 to-green-900/30 border border-emerald-400/30">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-4xl font-bold mb-6">
+              🤝 Партнёрская программа
+            </h2>
+            <p className="text-xl text-gray-400 mb-8">
+              Получай <span className="text-emerald-400 font-bold">20% комиссию</span> от каждой оплаты твоих рефералов. Неограниченный доход, реал-тайм аналитика, еженедельные выплаты.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="p-6 rounded-lg bg-slate-800/50 border border-emerald-400/20">
+                <p className="text-3xl font-bold text-emerald-400 mb-2">20%</p>
+                <p className="text-gray-400">Комиссия</p>
               </div>
-              <div>
-                <h4 className="font-bold mb-4">Продукт</h4>
-                <ul className="text-gray-400 text-sm space-y-2">
-                  <li><Link href="#" className="hover:text-white transition">Возможности</Link></li>
-                  <li><Link href="/pricing" className="hover:text-white transition">Тарифы</Link></li>
-                  <li><Link href="#" className="hover:text-white transition">API</Link></li>
-                </ul>
+              <div className="p-6 rounded-lg bg-slate-800/50 border border-emerald-400/20">
+                <p className="text-3xl font-bold text-emerald-400 mb-2">∞</p>
+                <p className="text-gray-400">Нет лимитов</p>
               </div>
-              <div>
-                <h4 className="font-bold mb-4">Компания</h4>
-                <ul className="text-gray-400 text-sm space-y-2">
-                  <li><Link href="#" className="hover:text-white transition">О нас</Link></li>
-                  <li><Link href="#" className="hover:text-white transition">Контакты</Link></li>
-                  <li><Link href="#" className="hover:text-white transition">Блог</Link></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-bold mb-4">Соцсети</h4>
-                <ul className="text-gray-400 text-sm space-y-2">
-                  <li><Link href="#" className="hover:text-white transition">Telegram</Link></li>
-                  <li><Link href="#" className="hover:text-white transition">Twitter</Link></li>
-                  <li><Link href="#" className="hover:text-white transition">GitHub</Link></li>
-                </ul>
+              <div className="p-6 rounded-lg bg-slate-800/50 border border-emerald-400/20">
+                <p className="text-3xl font-bold text-emerald-400 mb-2">⚡</p>
+                <p className="text-gray-400">Еженедельно</p>
               </div>
             </div>
-            <div className="border-t border-blue-400/10 pt-8 text-center text-gray-400 text-sm">
-              <p>© 2025 IAPRO. Все права защищены.</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/partner/register"
+                className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-green-500 rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-emerald-500/50 transition"
+              >
+                Начать зарабатывать
+              </Link>
+              <Link
+                href="/partner/login"
+                className="px-8 py-4 border-2 border-emerald-400 text-emerald-400 rounded-lg font-bold hover:bg-emerald-400/10 transition"
+              >
+                Войти в кабинет
+              </Link>
             </div>
           </div>
-        </footer>
+        </div>
       </div>
+
+      {/* Footer */}
+      <footer className="relative z-10 py-12 px-6 border-t border-blue-400/10 text-center text-gray-400">
+        <div className="max-w-6xl mx-auto mb-8">
+          <div className="flex flex-wrap justify-center gap-8 mb-8">
+            <Link href="/pricing" className="hover:text-white transition">Тарифы</Link>
+            <Link href="/partner/register" className="hover:text-white transition">Партнёрская программа</Link>
+            <Link href="/login" className="hover:text-white transition">Вход</Link>
+          </div>
+        </div>
+        <p>© 2026 AI Tools. Все права защищены.</p>
+      </footer>
     </div>
   );
 }
