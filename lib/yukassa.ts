@@ -1,76 +1,73 @@
-// lib/yukassa.ts
+export type PlanId = 'basic' | 'pro';
 
-export type PlanId = "basic" | "pro";
-
-export interface Plan {
-  id: PlanId;
-  name: string;
-  price: number; // в рублях
-  durationDays: number;
-}
-
-export const PLANS: Record<PlanId, Plan> = {
-  basic: { id: "basic", name: "Basic",  price: 299,  durationDays: 30 },
-  pro:   { id: "pro",   name: "PRO",    price: 499,  durationDays: 30 },
+export const PLANS: Record<string, any> = {
+  basic: {
+    planId: 'basic',
+    name: 'БАЗОВЫЙ',
+    price: 299,
+    requests: 100,
+    duration: '1 месяц',
+  },
+  pro: {
+    planId: 'pro',
+    name: 'PRO',
+    price: 499,
+    requests: -1, // unlimited
+    duration: '1 месяц',
+  },
 };
 
-export interface YookassaPayment {
-  id: string;
-  status: "pending" | "waiting_for_capture" | "succeeded" | "canceled";
-  amount: { value: string; currency: string };
-  metadata: { userId: string; planId: PlanId; refCode?: string };
-  confirmation: { confirmation_url: string };
-}
+export const YUKASSA_CONFIG = {
+  shopId: process.env.YUKASSA_SHOP_ID || '1362854', // ← НОВЫЙ ID
+  secretKey: process.env.YUKASSA_SECRET_KEY,
+  apiUrl: 'https://api.yookassa.ru/v3/payments',
+};
 
-/** Создаёт платёж через ЮKassa API */
-export async function createPayment(
-  userId: string,
+export function getPaymentData(
   planId: PlanId,
-  returnUrl: string,
-  refCode?: string
-): Promise<YookassaPayment> {
+  userId: string,
+  email: string,
+  referralCode?: string
+) {
   const plan = PLANS[planId];
-  const idempotenceKey = `${userId}-${planId}-${Date.now()}`;
+  if (!plan) throw new Error('Invalid plan');
 
-  const res = await fetch("https://api.yookassa.ru/v3/payments", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization:
-        "Basic " +
-        btoa(
-          `${process.env.YUKASSA_SHOP_ID}:${process.env.YUKASSA_SECRET_KEY}`
-        ),
-      "Idempotence-Key": idempotenceKey,
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ai-saas-blue-zeta.vercel.app';
+
+  return {
+    amount: {
+      value: plan.price.toFixed(2),
+      currency: 'RUB',
     },
-    body: JSON.stringify({
-      amount: { value: plan.price.toFixed(2), currency: "RUB" },
-      confirmation: { type: "redirect", return_url: returnUrl },
-      capture: true,
-      description: `AI Tools — тариф ${plan.name}`,
-      metadata: { userId, planId, refCode: refCode ?? "" },
-    }),
-  });
-
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.description ?? "ЮKassa: ошибка создания платежа");
-  }
-
-  return res.json();
-}
-
-/** Проверяет IP-адрес вебхука ЮKassa */
-export function isYookassaIp(ip: string): boolean {
-  const allowed = [
-    "185.71.76.0/27",
-    "185.71.77.0/27",
-    "77.75.153.0/25",
-    "77.75.156.11",
-    "77.75.156.35",
-    "77.75.154.128/25",
-    "2a02:5180::/32",
-  ];
-  // Упрощённая проверка для IPv4 без CIDR (для production используйте пакет 'ip-range-check')
-  return allowed.some((a) => ip.startsWith(a.split("/")[0].slice(0, -1)));
+    confirmation: {
+      type: 'redirect',
+      return_url: `${baseUrl}/dashboard?payment=success`,
+    },
+    capture: true,
+    description: `Подписка AI Tools - ${plan.name}`,
+    metadata: {
+      userId,
+      planId,
+      refCode: referralCode || '',
+    },
+    receipt: {
+      customer: {
+        email,
+      },
+      items: [
+        {
+          description: `Подписка AI Tools - ${plan.name}`,
+          quantity: '1',
+          amount: {
+            value: plan.price.toFixed(2),
+            currency: 'RUB',
+          },
+          vat_code: 6,
+          payment_mode: 'full_payment',
+          payment_subject: 'service',
+        },
+      ],
+      internet: 'true',
+    },
+  };
 }
