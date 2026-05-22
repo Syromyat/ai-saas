@@ -1,4 +1,4 @@
-'use client';
+[22.05.2026 23:00] Андрей Сыромятников: 'use client';
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
@@ -43,10 +43,13 @@ export default function PartnerRegisterPage() {
         return;
       }
 
-      // 2. Генерируем уникальный реферальный код
-      const referralCode = `partner_${Math.random().toString(36).substring(2, 10)}`;
+      // 2. Ждём 2 секунды чтобы пользователь полностью создался в БД
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // 3. Создаём партнёра в таблице partners
+      // 3. Генерируем уникальный реферальный код
+      const referralCode = partner_${Math.random().toString(36).substring(2, 10)};
+
+      // 4. Создаём партнёра в таблице partners
       const { error: partnerError } = await supabase.from('partners').insert({
         user_id: userId,
         email,
@@ -105,8 +108,7 @@ export default function PartnerRegisterPage() {
                 className="w-full px-4 py-3 rounded-lg bg-slate-700/50 border border-blue-400/20 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 transition"
               />
             </div>
-
-            {/* Name */}
+[22.05.2026 23:00] Андрей Сыромятников: {/* Name */}
             <div>
               <label className="block text-sm font-semibold mb-2">Имя</label>
               <input
