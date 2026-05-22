@@ -75,17 +75,6 @@ export default function Home() {
               </>
             )}
           </div>
-
-          {/* Partner Program Button */}
-          <div className="text-center mb-12">
-            <p className="text-gray-400 mb-4">Хочешь зарабатывать вместе с нами?</p>
-            <Link
-              href="/partner/register"
-              className="inline-block px-8 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-green-500 font-bold hover:shadow-lg hover:shadow-emerald-500/50 transition-all transform hover:scale-105"
-            >
-              🤝 Присоединиться к партнёрской программе
-            </Link>
-          </div>
         </div>
 
         {/* Features */}
@@ -140,7 +129,7 @@ export default function Home() {
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-xs font-bold">
+                <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-xs font-bold">
                   🌟 Популярный
                 </div>
               )}
@@ -173,54 +162,12 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Partner Program Section */}
-      <div className="relative z-10 py-20 px-6 max-w-6xl mx-auto">
-        <div className="p-12 rounded-3xl bg-gradient-to-r from-emerald-900/30 to-green-900/30 border border-emerald-400/30">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-6">
-              🤝 Партнёрская программа
-            </h2>
-            <p className="text-xl text-gray-400 mb-8">
-              Получай <span className="text-emerald-400 font-bold">20% комиссию</span> от каждой оплаты твоих рефералов. Неограниченный доход, реал-тайм аналитика, еженедельные выплаты.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="p-6 rounded-lg bg-slate-800/50 border border-emerald-400/20">
-                <p className="text-3xl font-bold text-emerald-400 mb-2">20%</p>
-                <p className="text-gray-400">Комиссия</p>
-              </div>
-              <div className="p-6 rounded-lg bg-slate-800/50 border border-emerald-400/20">
-                <p className="text-3xl font-bold text-emerald-400 mb-2">∞</p>
-                <p className="text-gray-400">Нет лимитов</p>
-              </div>
-              <div className="p-6 rounded-lg bg-slate-800/50 border border-emerald-400/20">
-                <p className="text-3xl font-bold text-emerald-400 mb-2">⚡</p>
-                <p className="text-gray-400">Еженедельно</p>
-              </div>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/partner/register"
-                className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-green-500 rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-emerald-500/50 transition"
-              >
-                Начать зарабатывать
-              </Link>
-              <Link
-                href="/partner/login"
-                className="px-8 py-4 border-2 border-emerald-400 text-emerald-400 rounded-lg font-bold hover:bg-emerald-400/10 transition"
-              >
-                Войти в кабинет
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Footer */}
       <footer className="relative z-10 py-12 px-6 border-t border-blue-400/10 text-center text-gray-400">
         <div className="max-w-6xl mx-auto mb-8">
           <div className="flex flex-wrap justify-center gap-8 mb-8">
             <Link href="/pricing" className="hover:text-white transition">Тарифы</Link>
-            <Link href="/partner/register" className="hover:text-white transition">Партнёрская программа</Link>
+            <Link href="/partner" className="hover:text-white transition">Партнёрская программа</Link>
             <Link href="/login" className="hover:text-white transition">Вход</Link>
           </div>
         </div>
