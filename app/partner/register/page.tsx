@@ -24,39 +24,17 @@ export default function PartnerRegisterPage() {
     try {
       const supabase = createClient();
 
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
+      // 1. Создаём аккаунт через API роут
+      const res = await fetch('/api/partner/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name, telegram }),
       });
 
-      if (authError) {
-        setError(authError.message);
-        setLoading(false);
-        return;
-      }
+      const data = await res.json();
 
-      const userId = authData.user?.id;
-      if (!userId) {
-        setError('Ошибка создания аккаунта');
-        setLoading(false);
-        return;
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      const referralCode = `partner_${Math.random().toString(36).substring(2, 10)}`;
-
-      const { error: partnerError } = await supabase.from('partners').insert({
-        user_id: userId,
-        email,
-        name,
-        telegram,
-        referral_code: referralCode,
-        commission_percent: 20,
-      });
-
-      if (partnerError) {
-        setError('Ошибка регистрации партнёра: ' + partnerError.message);
+      if (!res.ok) {
+        setError(data.error || 'Ошибка регистрации');
         setLoading(false);
         return;
       }
