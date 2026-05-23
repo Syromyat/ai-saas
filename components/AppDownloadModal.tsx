@@ -62,18 +62,18 @@ export default function AppDownloadModal() {
         </div>
 
         <div className="space-y-3 mb-8">
-          <Link
-            href="https://play.google.com/store/apps/details?id=com.aitools.app"
+          <button
+            onClick={() => window.open('https://play.google.com/store/apps/details?id=com.aitools.app', '_blank')}
             className="block w-full py-3 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold text-center hover:shadow-lg hover:shadow-green-500/50 transition"
           >
             🤖 Google Play (Android)
-          </Link>
-          <Link
-            href="https://apps.apple.com/app/ai-tools/id1234567890"
+          </button>
+          <button
+            onClick={() => window.open('https://apps.apple.com/app/ai-tools/id1234567890', '_blank')}
             className="block w-full py-3 rounded-lg bg-gradient-to-r from-gray-700 to-gray-800 text-white font-bold text-center hover:shadow-lg hover:shadow-gray-500/50 transition"
           >
             🍎 App Store (iOS)
-          </Link>
+          </button>
         </div>
 
         <button
