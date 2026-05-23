@@ -25,7 +25,7 @@ export default function PartnerRegisterPage() {
       const supabase = createClient();
 
       // 1. Создаём аккаунт через API роут
-      const res = await fetch('/api/partner/register', {
+     const res = await fetch('/api/partner-register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, name, telegram }),
