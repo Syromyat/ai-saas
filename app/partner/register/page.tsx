@@ -24,7 +24,6 @@ export default function PartnerRegisterPage() {
     try {
       const supabase = createClient();
 
-      // 1. Создаём аккаунт в auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -43,13 +42,10 @@ export default function PartnerRegisterPage() {
         return;
       }
 
-      // 2. Ждём 2 секунды чтобы пользователь полностью создался в БД
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // 3. Генерируем уникальный реферальный код
-      const referralCode = partner_${Math.random().toString(36).substring(2, 10)};
+      const referralCode = `partner_${Math.random().toString(36).substring(2, 10)}`;
 
-      // 4. Создаём партнёра в таблице partners
       const { error: partnerError } = await supabase.from('partners').insert({
         user_id: userId,
         email,
@@ -71,8 +67,9 @@ export default function PartnerRegisterPage() {
         router.push('/partner/login');
       }, 2000);
 
-    } catch (err: any) {
-      setError('Ошибка: ' + err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Неизвестная ошибка';
+      setError('Ошибка: ' + message);
     } finally {
       setLoading(false);
     }
@@ -80,23 +77,19 @@ export default function PartnerRegisterPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 text-white flex items-center justify-center px-6 py-20">
-      {/* Animated Background */}
       <div className="fixed inset-0 opacity-20 pointer-events-none">
         <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-screen filter blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
       </div>
 
       <div className="relative z-10 w-full max-w-md">
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-2">🤝 Партнёрская программа</h1>
           <p className="text-gray-400">Заработай с IAPRO</p>
         </div>
 
-        {/* Card */}
         <div className="p-8 rounded-3xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-blue-400/20 backdrop-blur-xl">
           <form onSubmit={handleRegister} className="space-y-6">
-            {/* Email */}
             <div>
               <label className="block text-sm font-semibold mb-2">Email</label>
               <input
@@ -108,7 +101,7 @@ export default function PartnerRegisterPage() {
                 className="w-full px-4 py-3 rounded-lg bg-slate-700/50 border border-blue-400/20 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 transition"
               />
             </div>
-[22.05.2026 23:00] Андрей Сыромятников: {/* Name */}
+
             <div>
               <label className="block text-sm font-semibold mb-2">Имя</label>
               <input
@@ -121,7 +114,6 @@ export default function PartnerRegisterPage() {
               />
             </div>
 
-            {/* Telegram */}
             <div>
               <label className="block text-sm font-semibold mb-2">Telegram (@username)</label>
               <input
@@ -133,7 +125,6 @@ export default function PartnerRegisterPage() {
               />
             </div>
 
-            {/* Password */}
             <div>
               <label className="block text-sm font-semibold mb-2">Пароль</label>
               <input
@@ -146,21 +137,18 @@ export default function PartnerRegisterPage() {
               />
             </div>
 
-            {/* Error */}
             {error && (
               <div className="p-4 rounded-lg bg-red-500/20 border border-red-400/30 text-red-300 text-sm">
                 {error}
               </div>
             )}
 
-            {/* Success */}
             {success && (
               <div className="p-4 rounded-lg bg-green-500/20 border border-green-400/30 text-green-300 text-sm">
                 {success}
               </div>
             )}
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
@@ -176,7 +164,6 @@ export default function PartnerRegisterPage() {
               )}
             </button>
 
-            {/* Link to Login */}
             <div className="text-center text-sm text-gray-400">
               Уже есть аккаунт?{' '}
               <Link href="/partner/login" className="text-blue-400 hover:text-blue-300">
@@ -186,7 +173,6 @@ export default function PartnerRegisterPage() {
           </form>
         </div>
 
-        {/* Back Link */}
         <div className="text-center mt-8">
           <Link href="/" className="text-gray-400 hover:text-white transition">
             ← На главную
