@@ -2,6 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import Link from 'next/link';
+import {
+  Users,
+  Globe,
+  Link2,
+  ArrowLeft,
+  CheckCircle,
+  XCircle,
+  Clock,
+  CreditCard,
+} from 'lucide-react';
 
 interface Lead {
   id: string;
@@ -57,9 +68,21 @@ export default function LeadsPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-4xl font-bold mb-2">👥 Все лиды</h1>
-        <p className="text-gray-400">Полный список пользователей и их источники</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
+            <Users className="w-8 h-8 text-blue-400" />
+            Все лиды
+          </h1>
+          <p className="text-gray-400">Полный список пользователей и их источники</p>
+        </div>
+        <Link
+          href="/admin/dashboard"
+          className="flex items-center gap-2 px-6 py-3 border border-blue-400 text-blue-400 rounded-lg hover:bg-blue-400/10 transition"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Назад
+        </Link>
       </div>
 
       {/* Filters */}
@@ -80,21 +103,21 @@ export default function LeadsPage() {
           onClick={() => setFilter('free')}
         />
         <FilterButton
-          label={`По реферраллам (${stats.referral})`}
+          label={`По рефералам (${stats.referral})`}
           active={filter === 'referral'}
           onClick={() => setFilter('referral')}
         />
       </div>
 
       {/* Table */}
-      <div className="rounded-2xl border border-blue-400/20 overflow-hidden">
+      <div className="rounded-2xl border border-blue-400/20 overflow-hidden bg-gradient-to-br from-slate-800/50 to-slate-900/50">
         <table className="w-full">
           <thead>
             <tr className="bg-slate-800/50 border-b border-blue-400/10">
               <th className="px-6 py-4 text-left text-sm font-bold text-blue-400">Email</th>
               <th className="px-6 py-4 text-left text-sm font-bold text-blue-400">Тариф</th>
               <th className="px-6 py-4 text-left text-sm font-bold text-blue-400">Источник</th>
-              <th className="px-6 py-4 text-left text-sm font-bold text-blue-400">Дата регистрации</th>
+              <th className="px-6 py-4 text-left text-sm font-bold text-blue-400">Дата</th>
               <th className="px-6 py-4 text-left text-sm font-bold text-blue-400">Статус</th>
             </tr>
           </thead>
@@ -106,21 +129,28 @@ export default function LeadsPage() {
               >
                 <td className="px-6 py-4 text-sm">{lead.email}</td>
                 <td className="px-6 py-4 text-sm">
-                  <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
+                  <span className={`flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold w-fit ${
                     lead.plan === 'free'
                       ? 'bg-gray-500/20 text-gray-300'
                       : lead.plan === 'basic'
                       ? 'bg-blue-500/20 text-blue-300'
                       : 'bg-purple-500/20 text-purple-300'
                   }`}>
+                    <CreditCard className="w-3 h-3" />
                     {lead.plan.toUpperCase()}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm">
                   {lead.referred_by ? (
-                    <span className="text-blue-400">🔗 {lead.referred_by}</span>
+                    <span className="flex items-center gap-1 text-blue-400">
+                      <Link2 className="w-4 h-4" />
+                      {lead.referred_by}
+                    </span>
                   ) : (
-                    <span className="text-gray-500">🌐 Прямой</span>
+                    <span className="flex items-center gap-1 text-gray-500">
+                      <Globe className="w-4 h-4" />
+                      Прямой
+                    </span>
                   )}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-400">
@@ -128,9 +158,20 @@ export default function LeadsPage() {
                 </td>
                 <td className="px-6 py-4 text-sm">
                   {lead.subscription_end ? (
-                    <span className="text-green-400">✓ Активна</span>
+                    <span className="flex items-center gap-1 text-green-400">
+                      <CheckCircle className="w-4 h-4" />
+                      Активна
+                    </span>
+                  ) : lead.plan !== 'free' ? (
+                    <span className="flex items-center gap-1 text-yellow-400">
+                      <Clock className="w-4 h-4" />
+                      Истекла
+                    </span>
                   ) : (
-                    <span className="text-yellow-400">⏳ Истекла</span>
+                    <span className="flex items-center gap-1 text-gray-500">
+                      <XCircle className="w-4 h-4" />
+                      Бесплатный
+                    </span>
                   )}
                 </td>
               </tr>
@@ -141,6 +182,7 @@ export default function LeadsPage() {
 
       {filteredLeads.length === 0 && (
         <div className="text-center py-16 text-gray-400">
+          <Users className="w-12 h-12 mx-auto mb-3 opacity-30" />
           <p className="text-xl">Лидов не найдено</p>
         </div>
       )}
