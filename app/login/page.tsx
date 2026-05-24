@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { initializeTracking, saveReferralToDatabase } from '@/lib/partner-tracking';
+import { Zap, Mail, Lock, LogIn, UserPlus, ArrowLeft, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
@@ -44,10 +45,8 @@ export default function LoginPage() {
         return;
       }
 
-      // Сохраняем реферральные данные
       await saveReferralToDatabase(supabase, userId, email);
 
-      // Создаём профиль пользователя
       const referralCode = `user_${Math.random().toString(36).substring(2, 10)}`;
       const { error: profileError } = await supabase.from('profiles').insert({
         id: userId,
@@ -100,13 +99,18 @@ export default function LoginPage() {
       {/* Animated Background */}
       <div className="fixed inset-0 opacity-20 pointer-events-none">
         <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-screen filter blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-screen filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div className="relative z-10 w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">🚀 AI Tools</h1>
+          <div className="flex items-center justify-center gap-2 text-3xl font-bold mb-2">
+            <Zap className="w-8 h-8 text-blue-400" />
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              AI Tools
+            </span>
+          </div>
           <p className="text-gray-400">
             {mode === 'login' ? 'Вход в аккаунт' : 'Создание аккаунта'}
           </p>
@@ -117,7 +121,10 @@ export default function LoginPage() {
           <form onSubmit={mode === 'login' ? handleLogin : handleSignUp} className="space-y-6">
             {/* Email */}
             <div>
-              <label className="block text-sm font-semibold mb-2">Email</label>
+              <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+                <Mail className="w-4 h-4 text-blue-400" />
+                Email
+              </label>
               <input
                 type="email"
                 value={email}
@@ -130,7 +137,10 @@ export default function LoginPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-semibold mb-2">Пароль</label>
+              <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+                <Lock className="w-4 h-4 text-blue-400" />
+                Пароль
+              </label>
               <input
                 type="password"
                 value={password}
@@ -156,13 +166,19 @@ export default function LoginPage() {
             >
               {loading ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   {mode === 'login' ? 'Вход...' : 'Регистрация...'}
                 </>
               ) : mode === 'login' ? (
-                '✓ Войти'
+                <>
+                  <LogIn className="w-4 h-4" />
+                  Войти
+                </>
               ) : (
-                '✓ Создать аккаунт'
+                <>
+                  <UserPlus className="w-4 h-4" />
+                  Создать аккаунт
+                </>
               )}
             </button>
 
@@ -174,7 +190,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setMode('signup')}
-                    className="text-blue-400 hover:text-blue-300"
+                    className="text-blue-400 hover:text-blue-300 transition"
                   >
                     Зарегистрироваться
                   </button>
@@ -185,7 +201,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setMode('login')}
-                    className="text-blue-400 hover:text-blue-300"
+                    className="text-blue-400 hover:text-blue-300 transition"
                   >
                     Войти
                   </button>
@@ -197,8 +213,9 @@ export default function LoginPage() {
 
         {/* Back Link */}
         <div className="text-center mt-8">
-          <Link href="/" className="text-gray-400 hover:text-white transition">
-            ← На главную
+          <Link href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition">
+            <ArrowLeft className="w-4 h-4" />
+            На главную
           </Link>
         </div>
       </div>
